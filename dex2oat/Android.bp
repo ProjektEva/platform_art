@@ -181,6 +181,9 @@ cc_defaults {
         "dex2oat_options.cc",
         "dex2oat.cc",
     ],
+    shared_libs: [
+        "libcutils",
+    ],
 
     target: {
         android: {

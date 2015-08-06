@@ -97,6 +97,7 @@
 #include "vdex_file.h"
 #include "verifier/verifier_deps.h"
 #include "well_known_classes.h"
+#include "cutils/properties.h"
 
 namespace art {
 
@@ -1241,6 +1242,17 @@ class Dex2Oat final {
 
     // Insert some compiler things.
     InsertCompileOptions(argc, argv);
+
+    // Override the number of compiler threads with optimal value (thru system property)
+    const char* propertyName = "ro.sys.fw.dex2oat_thread_count";
+    char thread_count_str[PROPERTY_VALUE_MAX];
+
+    if (property_get(propertyName, thread_count_str, "") > 0) {
+        if (ParseUint(thread_count_str, &thread_count_)) {
+            LOG(INFO) << "Adjusted thread count (for runtime dex2oat): " << thread_count_ << ", " << thread_count_str;
+        }
+    }
+
   }
 
   // Check whether the oat output files are writable, and open them for later. Also open a swap
